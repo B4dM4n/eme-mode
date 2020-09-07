@@ -1,0 +1,23 @@
+[package]
+name = "eme-mode"
+version = "0.1.0"
+description = "EME block cipher mode of operation"
+authors = ["Fabian Möller <fabianm88@gmail.com>"]
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+keywords = ["crypto", "block-cipher", "ciphers"]
+categories = ["cryptography"]
+repository = "https://github.com/B4dM4n/eme-block-mode"
+edition = "2018"
+
+[dependencies]
+block-cipher = "0.8.0"
+block-modes = { version = "0.6.1", default-features = false }
+block-padding = "0.2.1"
+
+[dev-dependencies]
+aes = "0.5.0"
+
+[features]
+default = ["std"]
+std = ["block-modes/std"]
