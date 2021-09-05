@@ -7,7 +7,7 @@ license = "MIT OR Apache-2.0"
 readme = "README.md"
 keywords = ["crypto", "block-cipher", "ciphers"]
 categories = ["cryptography"]
-repository = "https://github.com/B4dM4n/eme-block-mode"
+repository = "https://github.com/B4dM4n/eme-mode-rs"
 edition = "2018"
 
 [dependencies]
