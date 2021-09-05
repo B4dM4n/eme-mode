@@ -11,12 +11,12 @@ repository = "https://github.com/B4dM4n/eme-block-mode"
 edition = "2018"
 
 [dependencies]
-block-cipher = "0.8.0"
-block-modes = { version = "0.6.1", default-features = false }
+block-modes = { version = "0.8.1", default-features = false }
 block-padding = "0.2.1"
+cipher = "0.3.0"
 
 [dev-dependencies]
-aes = "0.5.0"
+aes = "0.7.5"
 
 [features]
 default = ["std"]

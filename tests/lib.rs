@@ -106,7 +106,7 @@ fn eme_test(test: &EmeTest) -> Vec<u8> {
   let mut pt = test.input.to_vec();
   let n = pt.len();
   for _ in 0..test.iterations {
-    let mode = Eme::<Aes256, ZeroPadding>::new_var(test.key, test.iv).unwrap();
+    let mode = Eme::<Aes256, ZeroPadding>::new_from_slices(test.key, test.iv).unwrap();
     match test.encrypt {
       true => mode.encrypt(&mut pt, n).unwrap(),
       false => mode.decrypt(&mut pt).unwrap(),
@@ -116,7 +116,7 @@ fn eme_test(test: &EmeTest) -> Vec<u8> {
 
   let mut ct = test.output.to_vec();
   for _ in 0..test.iterations {
-    let mode = Eme::<Aes256, ZeroPadding>::new_var(test.key, test.iv).unwrap();
+    let mode = Eme::<Aes256, ZeroPadding>::new_from_slices(test.key, test.iv).unwrap();
     match test.encrypt {
       true => mode.decrypt(&mut ct).unwrap(),
       false => mode.encrypt(&mut ct, n).unwrap(),

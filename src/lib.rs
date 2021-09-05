@@ -21,7 +21,7 @@
 //! let key = [0; 16];
 //! let iv = [1; 16];
 //! let plaintext = b"Hello world!";
-//! let cipher = Aes128Eme::new_var(&key, &iv).unwrap();
+//! let cipher = Aes128Eme::new_from_slices(&key, &iv).unwrap();
 //!
 //! // buffer must have enough space for message+padding
 //! let mut buffer = [0u8; 16];
@@ -36,7 +36,7 @@
 //! );
 //!
 //! // re-create cipher mode instance
-//! let cipher = Aes128Eme::new_var(&key, &iv).unwrap();
+//! let cipher = Aes128Eme::new_from_slices(&key, &iv).unwrap();
 //! let mut buf = ciphertext.to_vec();
 //! let decrypted_ciphertext = cipher.decrypt(&mut buf).unwrap();
 //!
@@ -48,17 +48,17 @@
 #[cfg(feature = "std")]
 extern crate std;
 
-use block_cipher::{
-  generic_array::{typenum::U16, ArrayLength, GenericArray},
-  BlockCipher, NewBlockCipher,
-};
 use block_modes::BlockMode;
 use block_padding::Padding;
+use cipher::{
+  generic_array::{typenum::U16, ArrayLength, GenericArray},
+  BlockCipher, BlockDecrypt, BlockEncrypt,
+};
 use core::marker::PhantomData;
 
-pub use block_cipher;
 pub use block_modes;
 pub use block_padding;
+pub use cipher;
 
 type Block<C> = GenericArray<u8, <C as BlockCipher>::BlockSize>;
 
@@ -102,7 +102,7 @@ pub struct Eme<C: BlockCipher + BlockCipher, P: Padding> {
 
 impl<C, P> Eme<C, P>
 where
-  C: BlockCipher<BlockSize = U16>,
+  C: BlockCipher<BlockSize = U16> + BlockEncrypt,
   <C as BlockCipher>::ParBlocks: ArrayLength<GenericArray<u8, <C as BlockCipher>::BlockSize>>,
   P: Padding,
 {
@@ -153,7 +153,7 @@ where
 
 impl<C, P> BlockMode<C, P> for Eme<C, P>
 where
-  C: BlockCipher<BlockSize = U16> + NewBlockCipher,
+  C: BlockCipher<BlockSize = U16> + BlockEncrypt + BlockDecrypt,
   <C as BlockCipher>::ParBlocks: ArrayLength<GenericArray<u8, <C as BlockCipher>::BlockSize>>,
   P: Padding,
 {
