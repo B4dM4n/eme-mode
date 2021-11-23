@@ -1,2 +1,5 @@
 /target
 Cargo.lock
+
+flake.nix
+flake.lock
