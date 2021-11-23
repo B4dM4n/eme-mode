@@ -1,6 +1,6 @@
 [package]
 name = "eme-mode"
-version = "0.2.1-pre"
+version = "0.2.1"
 description = "EME block cipher mode of operation"
 authors = ["Fabian Möller <fabianm88@gmail.com>"]
 license = "MIT OR Apache-2.0"
