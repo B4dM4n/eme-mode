@@ -14,7 +14,7 @@ It is generic over the used cipher and padding, but only supports ciphers with a
 
 ## Minimum Supported Rust Version
 
-This crate will follow the MSRV of the [RustCrypto][1] project, which  currently requires Rust **1.41** or higher.
+This crate will follow the MSRV of the [RustCrypto][1] project, which  currently requires Rust **1.56** or higher.
 
 Minimum supported Rust version can be changed in the future, but it will be
 done with a minor version bump.

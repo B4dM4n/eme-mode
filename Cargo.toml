@@ -8,16 +8,17 @@ readme = "README.md"
 keywords = ["crypto", "block-cipher", "ciphers"]
 categories = ["cryptography"]
 repository = "https://github.com/B4dM4n/eme-mode-rs"
-edition = "2018"
+edition = "2021"
 
 [dependencies]
-block-modes = { version = "0.8.1", default-features = false }
-block-padding = "0.2.1"
-cipher = "0.3.0"
+cipher = "0.4.3"
 
 [dev-dependencies]
-aes = "0.7.5"
+aes = "0.8.1"
 
 [features]
-default = ["std"]
-std = ["block-modes/std"]
+default = ["block-padding"]
+alloc = ["cipher/alloc"]
+std = ["cipher/std", "alloc"]
+block-padding = ["cipher/block-padding"]
+zeroize = ["cipher/zeroize"]
