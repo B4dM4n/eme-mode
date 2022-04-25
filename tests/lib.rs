@@ -1,6 +1,10 @@
 use aes::Aes256;
-use block_modes::BlockMode;
-use block_padding::ZeroPadding;
+use cipher::{
+  consts::{True, U16, U2048, U512},
+  generic_array::ArrayLength,
+  typenum::{IsLessOrEqual, PartialDiv},
+  BlockDecryptMut, BlockEncryptMut, KeyIvInit,
+};
 use eme_mode::Eme;
 
 struct EmeTest<'s> {
@@ -14,7 +18,7 @@ struct EmeTest<'s> {
 
 #[test]
 fn eme_16_aes256() {
-  eme_test(&EmeTest {
+  eme_test::<U16>(&EmeTest {
     encrypt: true,
     iterations: 1,
     key: &[0; 32],
@@ -35,7 +39,7 @@ fn eme_512_enc_aes256() {
     .collect();
   let (first, rest) = outputs.split_first().unwrap();
 
-  let mut output = eme_test(&EmeTest {
+  let mut output = eme_test::<U512>(&EmeTest {
     encrypt: true,
     iterations: 1,
     key: &[0; 32],
@@ -47,7 +51,7 @@ fn eme_512_enc_aes256() {
   for test_output in rest {
     let iv = &output[32..48];
     let input = &output;
-    output = eme_test(&EmeTest {
+    output = eme_test::<U512>(&EmeTest {
       encrypt: true,
       iterations: 100,
       key,
@@ -66,7 +70,7 @@ fn eme_512_dec_aes256() {
     .collect();
   let (first, rest) = outputs.split_first().unwrap();
 
-  let mut output = eme_test(&EmeTest {
+  let mut output = eme_test::<U512>(&EmeTest {
     encrypt: false,
     iterations: 1,
     key: &[0; 32],
@@ -78,7 +82,7 @@ fn eme_512_dec_aes256() {
   for test_output in rest {
     let iv = &output[32..48];
     let input = &output;
-    output = eme_test(&EmeTest {
+    output = eme_test::<U512>(&EmeTest {
       encrypt: false,
       iterations: 100,
       key,
@@ -92,7 +96,7 @@ fn eme_512_dec_aes256() {
 #[test]
 fn eme_2048_aes256() {
   // https://github.com/rfjakob/eme/blob/v1.1.1/eme_test.go
-  eme_test(&EmeTest {
+  eme_test::<U2048>(&EmeTest {
     encrypt: true,
     iterations: 1,
     key: &[0; 32],
@@ -102,24 +106,25 @@ fn eme_2048_aes256() {
   });
 }
 
-fn eme_test(test: &EmeTest) -> Vec<u8> {
+fn eme_test<BS: ArrayLength<u8> + PartialDiv<U16> + IsLessOrEqual<U2048, Output = True>>(
+  test: &EmeTest,
+) -> Vec<u8> {
   let mut pt = test.input.to_vec();
-  let n = pt.len();
   for _ in 0..test.iterations {
-    let mode = Eme::<Aes256, ZeroPadding>::new_from_slices(test.key, test.iv).unwrap();
+    let mut mode = Eme::<Aes256, BS>::new_from_slices(test.key, test.iv).unwrap();
     match test.encrypt {
-      true => mode.encrypt(&mut pt, n).unwrap(),
-      false => mode.decrypt(&mut pt).unwrap(),
+      true => mode.encrypt_block_mut(pt.as_mut_slice().into()),
+      false => mode.decrypt_block_mut(pt.as_mut_slice().into()),
     };
   }
   assert_eq!(&pt, &test.output);
 
   let mut ct = test.output.to_vec();
   for _ in 0..test.iterations {
-    let mode = Eme::<Aes256, ZeroPadding>::new_from_slices(test.key, test.iv).unwrap();
+    let mut mode = Eme::<Aes256, BS>::new_from_slices(test.key, test.iv).unwrap();
     match test.encrypt {
-      true => mode.decrypt(&mut ct).unwrap(),
-      false => mode.encrypt(&mut ct, n).unwrap(),
+      true => mode.decrypt_block_mut(ct.as_mut_slice().into()),
+      false => mode.encrypt_block_mut(ct.as_mut_slice().into()),
     };
   }
   assert_eq!(&ct, &test.input);
