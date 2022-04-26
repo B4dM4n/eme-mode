@@ -47,7 +47,7 @@ dual licensed as above, without any additional terms or conditions.
 [docs-image]: https://docs.rs/eme-mode/badge.svg
 [docs-link]: https://docs.rs/eme-mode/
 [license-image]: https://img.shields.io/badge/license-Apache2.0/MIT-blue.svg
-[rustc-image]: https://img.shields.io/badge/rustc-1.41+-blue.svg
+[rustc-image]: https://img.shields.io/badge/rustc-1.56+-blue.svg
 [build-image]: https://github.com/B4dM4n/eme-mode-rs/workflows/eme-mode/badge.svg?branch=master&event=push
 [build-link]: https://github.com/B4dM4n/eme-mode-rs/actions?query=workflow%3Aeme-mode
 
